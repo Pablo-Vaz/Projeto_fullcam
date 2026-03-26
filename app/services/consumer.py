@@ -50,5 +50,5 @@ class RabbitMqConsumer:
                     self.channel.stop_consuming()
 
 if __name__ == "__main__":
-    consumer = RabbitMqConsumer(['eventos_queue', 'queue_crud'])
+    consumer = RabbitMqConsumer(['eventos_queue', 'crud_queue'])
     consumer.consumir()

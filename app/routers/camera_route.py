@@ -5,7 +5,8 @@ from app.database.postgre import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.camera_model import Camera
 from app.schemas.camera_schema import CameraAttStatus, CameraResponse, CameraResposta, CameraCriarAtt
-from app.services.publisher_crud import publicar_crud
+from app.services.publisher_rabbit import PublisherRabbitMq
+
 
 
 
@@ -52,7 +53,9 @@ async def criar_camera(camera: CameraCriarAtt, db: AsyncSession = Depends(get_db
         "action": "Criação",
         "description": f"Câmera '{new_cam.nome}' criada com sucesso"
     }
-    publicar_crud(logs)
+    rabbit_crud= PublisherRabbitMq('crud_exchange','crud_queue','fanout','crud')
+    rabbit_crud.init_conn()
+    rabbit_crud.publish(logs)
     return logs
 
 
@@ -76,7 +79,9 @@ async def atualizar_camera(camera_id: int,dados: CameraCriarAtt, db: AsyncSessio
         "action":"Atualização",
         "description":f"A câmera '{camera.nome}' foi atualizada com sucesso"
     }
-    publicar_crud(logs)
+    rabbit_crud= PublisherRabbitMq('crud_exchange','crud_queue','fanout','crud')
+    rabbit_crud.init_conn()
+    rabbit_crud.publish(logs)
     return logs
 
 @router.patch('/cameras/{camera_id}', response_model=CameraResponse)
@@ -99,7 +104,9 @@ async def atualizar_status(camera_id: int, mudar: CameraAttStatus, db: AsyncSess
         "action":"Atualização status",
         "description":f"Status alterado para '{camera.status}'"
     }
-    publicar_crud(logs)
+    rabbit_crud= PublisherRabbitMq('crud_exchange','crud_queue','fanout','crud')
+    rabbit_crud.init_conn()
+    rabbit_crud.publish(logs)
     return logs
 
 
@@ -117,7 +124,9 @@ async def deletar_camera(camera_id: int, db:AsyncSession = Depends(get_db)):
         "action": "Exclusão",
         "description": f"Camera '{delete_cam.nome}' deletada com sucesso"
     }
-    publicar_crud(logs)
+    rabbit_crud= PublisherRabbitMq('crud_exchange','crud_queue','fanout','crud')
+    rabbit_crud.init_conn()
+    rabbit_crud.publish(logs)
     return logs
 
     
