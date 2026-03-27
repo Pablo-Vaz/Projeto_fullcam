@@ -14,8 +14,8 @@ RABBITMQ_URL = os.getenv("RABBITMQ_URL")
 
 
 class RabbitMqConsumer:
-    def __init__(self, filas):
-        self.filas = filas
+    def __init__(self, queue):
+        self.queue = queue
         self.connection = None
         self.channel = None
 
@@ -24,8 +24,8 @@ class RabbitMqConsumer:
         self.connection = pika.BlockingConnection(connection_parameters)
         self.channel = self.connection.channel()
 
-        for fila in self.filas:
-            self.channel.queue_declare(queue=fila, durable=True)
+        for queue in self.queue:
+            self.channel.queue_declare(queue=queue, durable=True)
 
         self.channel.basic_qos(prefetch_count=1)
 
@@ -39,8 +39,8 @@ class RabbitMqConsumer:
             try:
                 self.conection()
 
-                for fila in self.filas:
-                    self.channel.basic_consume(queue=fila, on_message_callback=self.callback, auto_ack=False)
+                for queue in self.queue:
+                    self.channel.basic_consume(queue=queue, on_message_callback=self.callback, auto_ack=False)
 
                 self.channel.start_consuming()
             except:
