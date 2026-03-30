@@ -1,6 +1,6 @@
 import re
 from fastapi import APIRouter,HTTPException
-from app.schemas.camera_schema import EventoDetectarPessoa, EventoLeituraPlaca
+from app.schemas.evento_schema import EventoDetectarPessoa, EventoLeituraPlaca
 from app.services.publisher_rabbit import PublisherRabbitMq
 
 router = APIRouter()
