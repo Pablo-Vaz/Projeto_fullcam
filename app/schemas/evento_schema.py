@@ -1,7 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel, ConfigDict, HttpUrl
 from datetime import datetime
-from app.models.camera_model import StatusCamera
 
 class EventoLeituraPlaca(BaseModel):
     dataehora: datetime

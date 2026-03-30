@@ -1,8 +1,9 @@
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from app.database.postgre import init_db
 from app.routers import camera_route, evento_route
+from app.services.security import get_user
 
 
 @asynccontextmanager
@@ -22,8 +23,8 @@ app = FastAPI(
 app.include_router(camera_route.router)
 app.include_router(evento_route.router)
 
-@app.get("/")
-async def health_check():
+@app.get("/", tags=["HEALTH CHECK"])
+async def health_check(user: str = Depends(get_user)):
     return {
   "status": "Healthy",
   "timestamp": datetime.now(timezone.utc),

@@ -1,13 +1,14 @@
 import re
-from fastapi import APIRouter,HTTPException
+from fastapi import APIRouter, Depends,HTTPException
 from app.schemas.evento_schema import EventoDetectarPessoa, EventoLeituraPlaca
 from app.services.publisher_rabbit import PublisherRabbitMq
+from app.services.security import get_user
 
-router = APIRouter()
+router = APIRouter(tags=["EVENTO ROUTE"])
 
 
 @router.post('/eventos/placa', status_code=201)
-async def criar_evento_leitura_de_placa(evento_placa: EventoLeituraPlaca):
+async def criar_evento_leitura_de_placa(evento_placa: EventoLeituraPlaca,  user: str = Depends(get_user)):
     placa = str(evento_placa.placa.replace("-", "").strip().upper())
     
     padrao_antigo = re.compile(r'^[A-Z]{3}[0-9]{4}$')
@@ -24,7 +25,7 @@ async def criar_evento_leitura_de_placa(evento_placa: EventoLeituraPlaca):
     return "Enviado para a fila"
 
 @router.post('/eventos/detectar_pessoa', status_code=201)
-async def criar_evento_detectar_pessoa(evento_pessoa: EventoDetectarPessoa):
+async def criar_evento_detectar_pessoa(evento_pessoa: EventoDetectarPessoa,  user: str = Depends(get_user)):
     evento = evento_pessoa.model_dump_json(ensure_ascii=False)
     try:
         people_rabbit = PublisherRabbitMq('eventos_exchange','eventos_queue', 'fanout', 'cameras')
