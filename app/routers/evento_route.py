@@ -4,7 +4,7 @@ from app.schemas.evento_schema import EventoDetectarPessoa, EventoLeituraPlaca
 from app.services.publisher_rabbit import PublisherRabbitMq
 from app.services.security import get_user
 
-router = APIRouter(tags=["EVENTO ROUTE"])
+router = APIRouter()
 
 
 @router.post('/eventos/placa', status_code=201)

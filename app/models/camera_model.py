@@ -13,7 +13,7 @@ class StatusCamera(enum.Enum):
 class Camera(Base):
     __tablename__= 'cameras'
     id = Column(Integer, primary_key=True)
-    nome = Column(String(50))
+    nome = Column(String(50), unique=True)
     localizacao = Column(String(50))
     status = Column(Enum(StatusCamera), default=StatusCamera.OFFLINE)
 

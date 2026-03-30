@@ -10,7 +10,7 @@ from app.services.security import get_user
 
 
 
-router = APIRouter(tags=["CRUD ROUTE"])
+router = APIRouter()
 
 
 @router.get('/cameras', response_model=list[CameraResposta])
@@ -39,8 +39,17 @@ async def criar_camera(camera: CameraCriarAtt, db: AsyncSession = Depends(get_db
         nome = camera.nome,
         localizacao = camera.localizacao
     )
-    db.add(new_cam)
+    
+    query = select(Camera).where(Camera.nome == new_cam.nome)
+    result = await db.execute(query)
+    camera_exist = result.scalar_one_or_none()
+    
+    if camera_exist:
+        raise HTTPException(status_code=409, detail="Câmera ja existe")
+    
+    
     try:
+        db.add(new_cam)
         await db.commit()
         await db.refresh(new_cam)
     except Exception:
@@ -65,6 +74,15 @@ async def atualizar_camera(camera_id: int,dados: CameraCriarAtt, db: AsyncSessio
         raise HTTPException(status_code=404, detail='Camera não encontrada')
     camera.nome = dados.nome
     camera.localizacao = dados.localizacao
+
+    query = select(Camera).where(Camera.nome == camera.nome)
+    result = await db.execute(query)
+    camera_exist = result.scalars().first()
+    
+    if camera_exist:
+        raise HTTPException(status_code=409, detail="Câmera ja existe")
+    
+    
     try:
         await db.commit()
         await db.refresh(camera)
