@@ -2,11 +2,10 @@ import json
 import pika
 import os
 from dotenv import load_dotenv
+
 load_dotenv()
 
-RABBITMQ_URL = os.getenv('RABBITMQ_URL')
-
-
+RABBITMQ_URL = os.getenv("RABBITMQ_URL")
 
 
 class PublisherRabbitMq:
@@ -22,10 +21,19 @@ class PublisherRabbitMq:
         connection_parameters = pika.URLParameters(RABBITMQ_URL)
         self.connection = pika.BlockingConnection(connection_parameters)
         self.channel = self.connection.channel()
-    
+
     def publish(self, evento):
-        self.channel.exchange_declare(exchange=self.exchange, exchange_type=self.type, durable=True)
+        self.channel.exchange_declare(
+            exchange=self.exchange, exchange_type=self.type, durable=True
+        )
         self.channel.queue_declare(queue=self.queue, durable=True)
-        self.channel.queue_bind(exchange=self.exchange, queue=self.queue, routing_key=self.rk)
-        self.channel.basic_publish(exchange=self.exchange, routing_key=self.rk, body=json.dumps(evento, ensure_ascii=False), properties=pika.BasicProperties(delivery_mode=2))
+        self.channel.queue_bind(
+            exchange=self.exchange, queue=self.queue, routing_key=self.rk
+        )
+        self.channel.basic_publish(
+            exchange=self.exchange,
+            routing_key=self.rk,
+            body=json.dumps(evento, ensure_ascii=False),
+            properties=pika.BasicProperties(delivery_mode=2),
+        )
         self.connection.close()

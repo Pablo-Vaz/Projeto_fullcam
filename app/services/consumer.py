@@ -3,11 +3,9 @@ import json
 import pika
 import os
 from dotenv import load_dotenv
-import os
 from app.database.mongo import salvar
 
 load_dotenv()
-
 
 
 RABBITMQ_URL = os.getenv("RABBITMQ_URL")
@@ -40,7 +38,9 @@ class RabbitMqConsumer:
                 self.conection()
 
                 for queue in self.queue:
-                    self.channel.basic_consume(queue=queue, on_message_callback=self.callback, auto_ack=False)
+                    self.channel.basic_consume(
+                        queue=queue, on_message_callback=self.callback, auto_ack=False
+                    )
 
                 self.channel.start_consuming()
             except:
@@ -49,6 +49,7 @@ class RabbitMqConsumer:
                 if self.channel and self.channel.is_open:
                     self.channel.stop_consuming()
 
+
 if __name__ == "__main__":
-    consumer = RabbitMqConsumer(['eventos_queue', 'crud_queue'])
+    consumer = RabbitMqConsumer(["eventos_queue", "crud_queue"])
     consumer.consumir()

@@ -1,23 +1,32 @@
-from typing import Optional
-from pydantic import BaseModel, ConfigDict, HttpUrl
 from datetime import datetime
+from pydantic import BaseModel, ConfigDict
 from app.models.camera_model import StatusCamera
 
-class CameraCriarAtt(BaseModel):
+
+class CameraBase(BaseModel):
     nome: str
     localizacao: str
+
+
+class CameraCriar(CameraBase):
+    pass
+
+
+class CameraAttAll(CameraBase):
+    pass
+
 
 class CameraAttStatus(BaseModel):
     status: StatusCamera
 
-class CameraResposta(BaseModel):
+
+class CamResponseGet(CameraBase):
     id: int
-    nome: str
-    localizacao: str
-    status: str
+    status: StatusCamera
     model_config = ConfigDict(from_attributes=True)
 
-class CameraResponse(BaseModel):
+
+class CamResponseLog(BaseModel):
     id: int
     dataehora: datetime
     action: str

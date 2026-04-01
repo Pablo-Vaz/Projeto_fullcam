@@ -1,6 +1,7 @@
-from typing import Optional
-from pydantic import BaseModel, ConfigDict, HttpUrl
 from datetime import datetime
+from typing import Optional, List
+from pydantic import BaseModel, ConfigDict, HttpUrl
+
 
 class EventoLeituraPlaca(BaseModel):
     dataehora: datetime
@@ -13,6 +14,7 @@ class BoundingBox(BaseModel):
     left: int
     width: int
     height: int
+
 
 class EventoDetectarPessoa(BaseModel):
     camera_id: int
@@ -31,7 +33,4 @@ class EventoDetectarMovimento(BaseModel):
     status: str
     target_type: str
     snapshot_url: HttpUrl
-    area_detected: list 
-
-
-
+    area_detected: List
