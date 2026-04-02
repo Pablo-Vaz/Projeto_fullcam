@@ -36,4 +36,15 @@ class PublisherRabbitMq:
             body=evento,
             properties=pika.BasicProperties(delivery_mode=2),
         )
-        self.connection.close()
+
+
+evento_rabbit = PublisherRabbitMq(
+        "eventos_exchange", "eventos_queue", "fanout", "cameras"
+    )
+crud_rabbit = PublisherRabbitMq("crud_exchange", "crud_queue", "fanout", "crud")
+
+def get_eventos():
+    return evento_rabbit
+
+def get_crud():
+    return crud_rabbit

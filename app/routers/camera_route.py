@@ -12,7 +12,7 @@ from app.schemas.camera_schema import (
     CameraCriar,
     CamResponseGet,
 )
-from app.services.publisher_rabbit import PublisherRabbitMq
+from app.services.publisher_rabbit import PublisherRabbitMq, get_crud
 from app.services.security import get_user
 
 
@@ -48,6 +48,7 @@ async def criar_camera(
     camera: CameraCriar,
     db: AsyncSession = Depends(get_db),
     user: str = Depends(get_user),
+    publisher: PublisherRabbitMq = Depends(get_crud)
 ) -> CamResponseLog:
     new_cam = Camera(nome=camera.nome, localizacao=camera.localizacao)
 
@@ -71,9 +72,7 @@ async def criar_camera(
         "action": "Criação",
         "description": f"Câmera '{new_cam.nome}' criada com sucesso",
     }
-    rabbit_crud = PublisherRabbitMq("crud_exchange", "crud_queue", "fanout", "crud")
-    rabbit_crud.init_conn()
-    rabbit_crud.publish(json.dumps(logs))
+    publisher.publish(json.dumps(logs))
     return logs
 
 
@@ -83,6 +82,7 @@ async def atualizar_camera(
     dados: CameraAttAll,
     db: AsyncSession = Depends(get_db),
     user: str = Depends(get_user),
+    publisher: PublisherRabbitMq = Depends(get_crud)
 ) -> CamResponseLog:
     camera = await db.get(Camera, camera_id)
     if not camera:
@@ -103,9 +103,7 @@ async def atualizar_camera(
         "action": "Atualização",
         "description": f"A câmera '{camera.nome}' foi atualizada com sucesso",
     }
-    rabbit_crud = PublisherRabbitMq("crud_exchange", "crud_queue", "fanout", "crud")
-    rabbit_crud.init_conn()
-    rabbit_crud.publish(json.dumps(logs))
+    publisher.publish(json.dumps(logs))
     return logs
 
 
@@ -115,6 +113,7 @@ async def atualizar_status(
     mudar: CameraAttStatus,
     db: AsyncSession = Depends(get_db),
     user: str = Depends(get_user),
+    publisher: PublisherRabbitMq = Depends(get_crud)
 ) -> CamResponseLog:
     camera = await db.get(Camera, camera_id)
     if not camera:
@@ -134,15 +133,13 @@ async def atualizar_status(
         "action": "Atualização status",
         "description": f"Status alterado para '{camera.status}'",
     }
-    rabbit_crud = PublisherRabbitMq("crud_exchange", "crud_queue", "fanout", "crud")
-    rabbit_crud.init_conn()
-    rabbit_crud.publish(json.dumps(logs))
+    publisher.publish(json.dumps(logs))
     return logs
 
 
 @router.delete("/cameras/{camera_id}", response_model=CamResponseLog)
 async def deletar_camera(
-    camera_id: int, db: AsyncSession = Depends(get_db), user: str = Depends(get_user)
+    camera_id: int, db: AsyncSession = Depends(get_db), user: str = Depends(get_user), publisher: PublisherRabbitMq = Depends(get_crud)
 ) -> CamResponseLog:
     delete_cam = await db.get(Camera, camera_id)
     if not delete_cam:
@@ -156,7 +153,5 @@ async def deletar_camera(
         "action": "Exclusão",
         "description": f"Camera '{delete_cam.nome}' deletada com sucesso",
     }
-    rabbit_crud = PublisherRabbitMq("crud_exchange", "crud_queue", "fanout", "crud")
-    rabbit_crud.init_conn()
-    rabbit_crud.publish(json.dumps(logs))
+    publisher.publish(json.dumps(logs))
     return logs
