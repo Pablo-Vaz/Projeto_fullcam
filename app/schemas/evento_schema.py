@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, List
+from typing import List
 from pydantic import BaseModel, ConfigDict, HttpUrl
 
 
@@ -9,6 +9,12 @@ class EventoLeituraPlaca(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class EventoBase(BaseModel):
+    camera_id: int
+    event_type: str
+    timestamp: datetime
+
+
 class BoundingBox(BaseModel):
     top: int
     left: int
@@ -16,20 +22,14 @@ class BoundingBox(BaseModel):
     height: int
 
 
-class EventoDetectarPessoa(BaseModel):
-    camera_id: int
-    event_type: str
-    timestamp: datetime
+class EventoDetectarPessoa(EventoBase):
     confidence: float
     roi_name: str
     bounding_box: BoundingBox
     model_config = ConfigDict(from_attributes=True)
 
 
-class EventoDetectarMovimento(BaseModel):
-    event: str
-    camera_id: int
-    timestamp: datetime
+class EventoDetectarMovimento(EventoBase):
     status: str
     target_type: str
     snapshot_url: HttpUrl

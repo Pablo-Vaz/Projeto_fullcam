@@ -33,7 +33,7 @@ class PublisherRabbitMq:
         self.channel.basic_publish(
             exchange=self.exchange,
             routing_key=self.rk,
-            body=json.dumps(evento, ensure_ascii=False),
+            body=evento,
             properties=pika.BasicProperties(delivery_mode=2),
         )
         self.connection.close()

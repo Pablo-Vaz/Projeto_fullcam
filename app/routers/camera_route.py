@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import APIRouter, Depends, HTTPException
@@ -72,7 +73,7 @@ async def criar_camera(
     }
     rabbit_crud = PublisherRabbitMq("crud_exchange", "crud_queue", "fanout", "crud")
     rabbit_crud.init_conn()
-    rabbit_crud.publish(logs)
+    rabbit_crud.publish(json.dumps(logs))
     return logs
 
 
@@ -89,13 +90,6 @@ async def atualizar_camera(
     camera.nome = dados.nome
     camera.localizacao = dados.localizacao
 
-    query = select(Camera).where(Camera.nome == camera.nome)
-    result = await db.execute(query)
-    camera_exist = result.scalars().first()
-
-    if camera_exist:
-        raise HTTPException(status_code=409, detail="Câmera ja existe")
-
     try:
         await db.commit()
         await db.refresh(camera)
@@ -111,7 +105,7 @@ async def atualizar_camera(
     }
     rabbit_crud = PublisherRabbitMq("crud_exchange", "crud_queue", "fanout", "crud")
     rabbit_crud.init_conn()
-    rabbit_crud.publish(logs)
+    rabbit_crud.publish(json.dumps(logs))
     return logs
 
 
@@ -142,7 +136,7 @@ async def atualizar_status(
     }
     rabbit_crud = PublisherRabbitMq("crud_exchange", "crud_queue", "fanout", "crud")
     rabbit_crud.init_conn()
-    rabbit_crud.publish(logs)
+    rabbit_crud.publish(json.dumps(logs))
     return logs
 
 
@@ -164,5 +158,5 @@ async def deletar_camera(
     }
     rabbit_crud = PublisherRabbitMq("crud_exchange", "crud_queue", "fanout", "crud")
     rabbit_crud.init_conn()
-    rabbit_crud.publish(logs)
+    rabbit_crud.publish(json.dumps(logs))
     return logs
