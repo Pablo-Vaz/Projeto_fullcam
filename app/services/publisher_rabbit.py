@@ -39,12 +39,14 @@ class PublisherRabbitMq:
 
 
 evento_rabbit = PublisherRabbitMq(
-        "eventos_exchange", "eventos_queue", "fanout", "cameras"
-    )
+    "eventos_exchange", "eventos_queue", "fanout", "cameras"
+)
 crud_rabbit = PublisherRabbitMq("crud_exchange", "crud_queue", "fanout", "crud")
+
 
 def get_eventos():
     return evento_rabbit
+
 
 def get_crud():
     return crud_rabbit
