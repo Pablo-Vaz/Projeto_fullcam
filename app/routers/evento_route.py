@@ -9,7 +9,9 @@ router = APIRouter()
 
 @router.post("/eventos/placa", status_code=201)
 async def criar_evento_leitura_de_placa(
-    evento_placa: EventoLeituraPlaca, user: str = Depends(get_user), publisher: PublisherRabbitMq = Depends(get_eventos)
+    evento_placa: EventoLeituraPlaca,
+    user: str = Depends(get_user),
+    publisher: PublisherRabbitMq = Depends(get_eventos),
 ):
     placa = str(evento_placa.placa.replace("-", "").strip().upper())
 
@@ -21,18 +23,19 @@ async def criar_evento_leitura_de_placa(
     if not padrao_antigo.match(placa) or padrao_mercosul.match(placa):
         raise HTTPException(status_code=404, detail="Placa incorreta")
 
-    
     publisher.publish(eventos)
     return "Enviado para a fila"
 
 
 @router.post("/eventos/detectar_pessoa", status_code=201)
 async def criar_evento_detectar_pessoa(
-    evento_pessoa: EventoDetectarPessoa, user: str = Depends(get_user), publisher: PublisherRabbitMq = Depends(get_eventos)
+    evento_pessoa: EventoDetectarPessoa,
+    user: str = Depends(get_user),
+    publisher: PublisherRabbitMq = Depends(get_eventos),
 ):
     evento = evento_pessoa.model_dump_json(ensure_ascii=False)
     try:
-        
+
         publisher.publish(evento)
     except Exception:
         raise HTTPException(status_code=500, detail="Erro ao publicar evento")

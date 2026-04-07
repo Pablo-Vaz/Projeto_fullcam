@@ -48,7 +48,7 @@ async def criar_camera(
     camera: CameraCriar,
     db: AsyncSession = Depends(get_db),
     user: str = Depends(get_user),
-    publisher: PublisherRabbitMq = Depends(get_crud)
+    publisher: PublisherRabbitMq = Depends(get_crud),
 ) -> CamResponseLog:
     new_cam = Camera(nome=camera.nome, localizacao=camera.localizacao)
 
@@ -82,7 +82,7 @@ async def atualizar_camera(
     dados: CameraAttAll,
     db: AsyncSession = Depends(get_db),
     user: str = Depends(get_user),
-    publisher: PublisherRabbitMq = Depends(get_crud)
+    publisher: PublisherRabbitMq = Depends(get_crud),
 ) -> CamResponseLog:
     camera = await db.get(Camera, camera_id)
     if not camera:
@@ -113,7 +113,7 @@ async def atualizar_status(
     mudar: CameraAttStatus,
     db: AsyncSession = Depends(get_db),
     user: str = Depends(get_user),
-    publisher: PublisherRabbitMq = Depends(get_crud)
+    publisher: PublisherRabbitMq = Depends(get_crud),
 ) -> CamResponseLog:
     camera = await db.get(Camera, camera_id)
     if not camera:
@@ -139,7 +139,10 @@ async def atualizar_status(
 
 @router.delete("/cameras/{camera_id}", response_model=CamResponseLog)
 async def deletar_camera(
-    camera_id: int, db: AsyncSession = Depends(get_db), user: str = Depends(get_user), publisher: PublisherRabbitMq = Depends(get_crud)
+    camera_id: int,
+    db: AsyncSession = Depends(get_db),
+    user: str = Depends(get_user),
+    publisher: PublisherRabbitMq = Depends(get_crud),
 ) -> CamResponseLog:
     delete_cam = await db.get(Camera, camera_id)
     if not delete_cam:
