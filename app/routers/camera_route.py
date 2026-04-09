@@ -13,7 +13,7 @@ from app.schemas.camera_schema import (
     CamResponseGet,
 )
 from app.services.publisher_rabbit import PublisherRabbitMq, get_crud
-from app.services.security import get_user
+from app.services.security1 import get_user_atual
 
 
 router = APIRouter()
@@ -21,7 +21,7 @@ router = APIRouter()
 
 @router.get("/cameras", response_model=list[CamResponseGet])
 async def listar_cameras(
-    db: AsyncSession = Depends(get_db), user: str = Depends(get_user)
+    db: AsyncSession = Depends(get_db), user: str = Depends(get_user_atual)
 ) -> list[CamResponseGet]:
     action = select(Camera)
     result = await db.execute(action)
@@ -33,7 +33,7 @@ async def listar_cameras(
 
 @router.get("/cameras{camera_id}", response_model=CamResponseGet)
 async def listar_camera(
-    camera_id: int, db: AsyncSession = Depends(get_db), user: str = Depends(get_user)
+    camera_id: int, db: AsyncSession = Depends(get_db), user: str = Depends(get_user_atual)
 ) -> CamResponseGet:
     action = select(Camera).where(Camera.id == camera_id)
     result = await db.execute(action)
@@ -47,7 +47,7 @@ async def listar_camera(
 async def criar_camera(
     camera: CameraCriar,
     db: AsyncSession = Depends(get_db),
-    user: str = Depends(get_user),
+    user: str = Depends(get_user_atual),
     publisher: PublisherRabbitMq = Depends(get_crud),
 ) -> CamResponseLog:
     new_cam = Camera(nome=camera.nome, localizacao=camera.localizacao)
@@ -81,7 +81,7 @@ async def atualizar_camera(
     camera_id: int,
     dados: CameraAttAll,
     db: AsyncSession = Depends(get_db),
-    user: str = Depends(get_user),
+    user: str = Depends(get_user_atual),
     publisher: PublisherRabbitMq = Depends(get_crud),
 ) -> CamResponseLog:
     camera = await db.get(Camera, camera_id)
@@ -112,7 +112,7 @@ async def atualizar_status(
     camera_id: int,
     mudar: CameraAttStatus,
     db: AsyncSession = Depends(get_db),
-    user: str = Depends(get_user),
+    user: str = Depends(get_user_atual),
     publisher: PublisherRabbitMq = Depends(get_crud),
 ) -> CamResponseLog:
     camera = await db.get(Camera, camera_id)
@@ -141,7 +141,7 @@ async def atualizar_status(
 async def deletar_camera(
     camera_id: int,
     db: AsyncSession = Depends(get_db),
-    user: str = Depends(get_user),
+    user: str = Depends(get_user_atual),
     publisher: PublisherRabbitMq = Depends(get_crud),
 ) -> CamResponseLog:
     delete_cam = await db.get(Camera, camera_id)

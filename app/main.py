@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from fastapi import FastAPI
 from app.database.postgre import init_db
-from app.routers import camera_route, evento_route
+from app.routers import camera_route, evento_route, login_route
 
 
 @asynccontextmanager
@@ -23,6 +23,7 @@ app = FastAPI(
 
 app.include_router(camera_route.router)
 app.include_router(evento_route.router)
+app.include_router(login_route.router)
 
 
 @app.get("/")

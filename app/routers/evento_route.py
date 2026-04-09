@@ -2,7 +2,7 @@ import re
 from fastapi import APIRouter, Depends, HTTPException
 from app.schemas.evento_schema import EventoDetectarPessoa, EventoLeituraPlaca
 from app.services.publisher_rabbit import PublisherRabbitMq, get_eventos
-from app.services.security import get_user
+from app.services.security1 import get_user_atual
 
 router = APIRouter()
 
@@ -10,7 +10,7 @@ router = APIRouter()
 @router.post("/eventos/placa", status_code=201)
 async def criar_evento_leitura_de_placa(
     evento_placa: EventoLeituraPlaca,
-    user: str = Depends(get_user),
+    user: str = Depends(get_user_atual),
     publisher: PublisherRabbitMq = Depends(get_eventos),
 ):
     placa = str(evento_placa.placa.replace("-", "").strip().upper())
@@ -30,7 +30,7 @@ async def criar_evento_leitura_de_placa(
 @router.post("/eventos/detectar_pessoa", status_code=201)
 async def criar_evento_detectar_pessoa(
     evento_pessoa: EventoDetectarPessoa,
-    user: str = Depends(get_user),
+    user: str = Depends(get_user_atual),
     publisher: PublisherRabbitMq = Depends(get_eventos),
 ):
     evento = evento_pessoa.model_dump_json(ensure_ascii=False)
