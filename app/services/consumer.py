@@ -27,7 +27,8 @@ class RabbitMqConsumer:
 
         self.channel.basic_qos(prefetch_count=1)
 
-    def callback(self, ch, method, properties, body):
+    @staticmethod
+    def callback(ch, method, properties, body):
         evento = json.loads(body)
         salvar(evento)
         ch.basic_ack(delivery_tag=method.delivery_tag)
