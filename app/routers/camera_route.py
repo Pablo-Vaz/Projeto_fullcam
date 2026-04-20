@@ -12,7 +12,7 @@ from app.schemas.camera_schema import (
     CameraCriar,
     CamResponseGet,
 )
-from app.services.publisher_rabbit import PublisherRabbitMq, get_crud
+from app.services.publish_refac import PublisherRabbitMq, get_crud
 from app.services.security1 import get_user_atual
 
 

@@ -10,7 +10,7 @@ fake_user = {
     "password": "123456"
 }
 
-@router.post("/login")
+@router.post("/login", status_code = 201)
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     if form_data.username != fake_user["username"] or form_data.password != fake_user["password"]:
         raise HTTPException(

@@ -1,7 +1,7 @@
 import re
 from fastapi import APIRouter, Depends, HTTPException
 from app.schemas.evento_schema import EventoDetectarPessoa, EventoLeituraPlaca
-from app.services.publisher_rabbit import PublisherRabbitMq, get_eventos
+from app.services.publish_refac import PublisherRabbitMq, get_eventos
 from app.services.security1 import get_user_atual
 
 router = APIRouter(dependencies=[Depends(get_user_atual)])
