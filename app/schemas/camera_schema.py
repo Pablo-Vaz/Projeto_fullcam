@@ -6,14 +6,17 @@ from app.models.camera_model import StatusCamera
 class CameraBase(BaseModel):
     nome: str
     localizacao: str
+    status: StatusCamera
 
 
-class CameraCriar(CameraBase):
-    pass
+class CameraCreate(BaseModel):
+    nome: str
+    localizacao: str
 
 
-class CameraAttAll(CameraBase):
-    pass
+class CameraAttAll(BaseModel):
+    nome: str
+    localizacao: str
 
 
 class CameraAttStatus(BaseModel):
